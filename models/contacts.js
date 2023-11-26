@@ -35,12 +35,6 @@ const addToFavourites = (contactId, userId, favourites) => {
   {new: true})
 }
 
-// const removeOldIds = () => {
-//   Contact.updateMany=({}, {$unset: {id:1}}, false, true)
-// }
-
-// removeOldIds()
-
 module.exports = {
   listContacts,
   getContactById,
