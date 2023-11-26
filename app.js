@@ -4,8 +4,11 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 
 require("dotenv").config();
+require('./config/config-passport')
 
 const contactsRouter = require('./routes/api/contacts')
+const usersRouter = require('./routes/api/users');
+const passport = require('passport')
 
 const app = express()
 
@@ -32,8 +35,9 @@ connection
     console.log("Couldn't load database", error.message)
     process.exit(1)
   })
-
+app.use(passport.initialize())
 app.use('/api/contacts', contactsRouter)
+app.use('/api/users', usersRouter)
 
 app.use((req, res) => {
   res.status(404).json({ 
