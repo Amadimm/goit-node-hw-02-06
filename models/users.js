@@ -3,6 +3,10 @@ const gravatar = require('gravatar')
 const fs = require('fs').promises
 const jimp = require('jimp')
 
+const sgMail = require('@sendgrid/mail')
+
+sgMail.setApiKey(process.env.EMAIL_API_KEY)
+
 
 const ListUsers = async () => {
     return await User.find()
@@ -46,10 +50,32 @@ try {
     } 
 }
 
+const verifyUser = async (verificationToken) => {
+    return User.findOneAndUpdate(
+        { verificationToken },
+        { $set: { verificationToken: null, verify: true }},
+        { new: true }
+    )
+}
+
+const verificationEmail = async (email, token) => {
+    await sgMail.send({
+        to: email,
+        from: "scarlet_raven@wp.pl",
+        subject: "Contacts API - verification link",
+        text: `Click here to verify your account >> http://localhost:3000/api/users/verify/${token}`,
+        html: `<a href "http://localhost:3000/api/users/verify/${token}"> >>>Verify your email here!<<<< </a>
+        <hr/> or copy this link into your browser - http://localhost:3000/api/users/verify/${token}
+        <hr/> Ignore this message if you're not trying to sign in to Contacts API`
+    })
+}
+
 module.exports = {
     ListUsers,
     AddUser,
     logOut,
     currentUser,
-    addAvatar
+    addAvatar,
+    verifyUser,
+    verificationEmail
 }
